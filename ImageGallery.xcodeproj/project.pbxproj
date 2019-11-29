@@ -8,13 +8,20 @@
 
 /* Begin PBXBuildFile section */
 		78A919CB238E631B00239860 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919CA238E631B00239860 /* AppDelegate.swift */; };
-		78A919CD238E631B00239860 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919CC238E631B00239860 /* SceneDelegate.swift */; };
-		78A919CF238E631B00239860 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919CE238E631B00239860 /* ViewController.swift */; };
 		78A919D2238E631B00239860 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78A919D0238E631B00239860 /* Main.storyboard */; };
 		78A919D4238E631C00239860 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78A919D3238E631C00239860 /* Assets.xcassets */; };
 		78A919D7238E631C00239860 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78A919D5238E631C00239860 /* LaunchScreen.storyboard */; };
 		78A919E2238E631C00239860 /* ImageGalleryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919E1238E631C00239860 /* ImageGalleryTests.swift */; };
 		78A919ED238E631C00239860 /* ImageGalleryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919EC238E631C00239860 /* ImageGalleryUITests.swift */; };
+		78A919FC238E679800239860 /* TrashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919FB238E679800239860 /* TrashView.swift */; };
+		78A919FE238E692B00239860 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919FD238E692B00239860 /* Utilities.swift */; };
+		78A91A01238E698000239860 /* ImageGalleryCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A00238E698000239860 /* ImageGalleryCollectionViewController.swift */; };
+		78A91A03238E69A600239860 /* ImageGalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A02238E69A600239860 /* ImageGalleryCollectionViewCell.swift */; };
+		78A91A07238E6D7B00239860 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A06238E6D7B00239860 /* Image.swift */; };
+		78A91A09238E6DC100239860 /* Gallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A08238E6DC100239860 /* Gallery.swift */; };
+		78A91A0B238E800900239860 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A0A238E800900239860 /* ImageViewController.swift */; };
+		78A91A0E238E93FF00239860 /* DocumentsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A0D238E93FF00239860 /* DocumentsTableViewController.swift */; };
+		78A91A10238E940C00239860 /* DocumentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A91A0F238E940C00239860 /* DocumentTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,8 +44,6 @@
 /* Begin PBXFileReference section */
 		78A919C7238E631B00239860 /* ImageGallery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageGallery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78A919CA238E631B00239860 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		78A919CC238E631B00239860 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		78A919CE238E631B00239860 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		78A919D1238E631B00239860 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		78A919D3238E631C00239860 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		78A919D6238E631C00239860 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -49,6 +54,15 @@
 		78A919E8238E631C00239860 /* ImageGalleryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageGalleryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		78A919EC238E631C00239860 /* ImageGalleryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryUITests.swift; sourceTree = "<group>"; };
 		78A919EE238E631C00239860 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		78A919FB238E679800239860 /* TrashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashView.swift; sourceTree = "<group>"; };
+		78A919FD238E692B00239860 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		78A91A00238E698000239860 /* ImageGalleryCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryCollectionViewController.swift; sourceTree = "<group>"; };
+		78A91A02238E69A600239860 /* ImageGalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryCollectionViewCell.swift; sourceTree = "<group>"; };
+		78A91A06238E6D7B00239860 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		78A91A08238E6DC100239860 /* Gallery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gallery.swift; sourceTree = "<group>"; };
+		78A91A0A238E800900239860 /* ImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
+		78A91A0D238E93FF00239860 /* DocumentsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsTableViewController.swift; sourceTree = "<group>"; };
+		78A91A0F238E940C00239860 /* DocumentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,13 +113,13 @@
 		78A919C9238E631B00239860 /* ImageGallery */ = {
 			isa = PBXGroup;
 			children = (
-				78A919CA238E631B00239860 /* AppDelegate.swift */,
-				78A919CC238E631B00239860 /* SceneDelegate.swift */,
-				78A919CE238E631B00239860 /* ViewController.swift */,
 				78A919D0238E631B00239860 /* Main.storyboard */,
-				78A919D3238E631C00239860 /* Assets.xcassets */,
-				78A919D5238E631C00239860 /* LaunchScreen.storyboard */,
-				78A919D8238E631C00239860 /* Info.plist */,
+				78A91A0A238E800900239860 /* ImageViewController.swift */,
+				78A91A04238E6D6700239860 /* Model */,
+				78A91A05238E6D6C00239860 /* View */,
+				78A91A0C238E93E900239860 /* TableView */,
+				78A919FF238E696E00239860 /* CollectionView */,
+				78A919FA238E634400239860 /* Misc */,
 			);
 			path = ImageGallery;
 			sourceTree = "<group>";
@@ -126,6 +140,53 @@
 				78A919EE238E631C00239860 /* Info.plist */,
 			);
 			path = ImageGalleryUITests;
+			sourceTree = "<group>";
+		};
+		78A919FA238E634400239860 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				78A919CA238E631B00239860 /* AppDelegate.swift */,
+				78A919D3238E631C00239860 /* Assets.xcassets */,
+				78A919D5238E631C00239860 /* LaunchScreen.storyboard */,
+				78A919D8238E631C00239860 /* Info.plist */,
+				78A919FD238E692B00239860 /* Utilities.swift */,
+			);
+			path = Misc;
+			sourceTree = "<group>";
+		};
+		78A919FF238E696E00239860 /* CollectionView */ = {
+			isa = PBXGroup;
+			children = (
+				78A91A00238E698000239860 /* ImageGalleryCollectionViewController.swift */,
+				78A91A02238E69A600239860 /* ImageGalleryCollectionViewCell.swift */,
+			);
+			path = CollectionView;
+			sourceTree = "<group>";
+		};
+		78A91A04238E6D6700239860 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				78A91A06238E6D7B00239860 /* Image.swift */,
+				78A91A08238E6DC100239860 /* Gallery.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		78A91A05238E6D6C00239860 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				78A919FB238E679800239860 /* TrashView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		78A91A0C238E93E900239860 /* TableView */ = {
+			isa = PBXGroup;
+			children = (
+				78A91A0D238E93FF00239860 /* DocumentsTableViewController.swift */,
+				78A91A0F238E940C00239860 /* DocumentTableViewCell.swift */,
+			);
+			path = TableView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,9 +320,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78A919CF238E631B00239860 /* ViewController.swift in Sources */,
+				78A919FE238E692B00239860 /* Utilities.swift in Sources */,
+				78A91A07238E6D7B00239860 /* Image.swift in Sources */,
+				78A91A09238E6DC100239860 /* Gallery.swift in Sources */,
 				78A919CB238E631B00239860 /* AppDelegate.swift in Sources */,
-				78A919CD238E631B00239860 /* SceneDelegate.swift in Sources */,
+				78A91A03238E69A600239860 /* ImageGalleryCollectionViewCell.swift in Sources */,
+				78A919FC238E679800239860 /* TrashView.swift in Sources */,
+				78A91A10238E940C00239860 /* DocumentTableViewCell.swift in Sources */,
+				78A91A0E238E93FF00239860 /* DocumentsTableViewController.swift in Sources */,
+				78A91A0B238E800900239860 /* ImageViewController.swift in Sources */,
+				78A91A01238E698000239860 /* ImageGalleryCollectionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,7 +504,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 36UX7SKY3J;
-				INFOPLIST_FILE = ImageGallery/Info.plist;
+				INFOPLIST_FILE = ImageGallery/Misc/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -454,7 +523,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 36UX7SKY3J;
-				INFOPLIST_FILE = ImageGallery/Info.plist;
+				INFOPLIST_FILE = ImageGallery/Misc/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
