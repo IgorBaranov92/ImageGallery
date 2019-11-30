@@ -117,7 +117,6 @@
 			children = (
 				78A919D0238E631B00239860 /* Main.storyboard */,
 				78A91A0A238E800900239860 /* ImageViewController.swift */,
-				7818A781239282CA00B2B121 /* Galleries.swift */,
 				78A91A04238E6D6700239860 /* Model */,
 				78A91A05238E6D6C00239860 /* View */,
 				78A91A0C238E93E900239860 /* TableView */,
@@ -169,6 +168,7 @@
 		78A91A04238E6D6700239860 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7818A781239282CA00B2B121 /* Galleries.swift */,
 				78A91A06238E6D7B00239860 /* Image.swift */,
 				78A91A08238E6DC100239860 /* Gallery.swift */,
 			);

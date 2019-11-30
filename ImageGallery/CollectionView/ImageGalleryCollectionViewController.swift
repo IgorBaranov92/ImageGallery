@@ -7,8 +7,9 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     Removeable
 {
  
-    var gallery = [Image]()
     var galleryName = String()
+    
+    private lazy var gallery = Gallery(name:galleryName)
     
     private var imageFetcher: ImageFetcher!
     
@@ -36,13 +37,13 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - CollectionView datasourse
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return gallery.count
+        return gallery.images.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageGallery", for: indexPath)
         if let imageGalleryCell = cell as? ImageGalleryCollectionViewCell {
-            imageGalleryCell.url = gallery[indexPath.item].url
+            imageGalleryCell.url = gallery.images[indexPath.item].url
             
         }
         return cell
@@ -52,7 +53,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - CollectionViewFlowLayout delegate
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let ratio = CGFloat(gallery[indexPath.item].aspectRatio)
+        let ratio = CGFloat(gallery.images[indexPath.item].aspectRatio)
         return CGSize(width: calculatedWidth,
                      height: calculatedWidth/ratio)
     }
@@ -84,7 +85,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             let currentCell = sender as? ImageGalleryCollectionViewCell,
             let index = collectionView.indexPath(for: currentCell)
         {
-                destination.url = gallery[index.item].url
+            destination.url = gallery.images[index.item].url
         }
     }
     
@@ -97,10 +98,11 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             if let sourseIndexPath = item.sourceIndexPath { // local case
                 if let image = item.dragItem.localObject as? Image {
                     collectionView.performBatchUpdates({
-                        gallery.remove(at: sourseIndexPath.item)
-                        gallery.insert(image, at: destinationIndexPath.item)
+                        gallery.images.remove(at: sourseIndexPath.item)
+                        gallery.images.insert(image, at: destinationIndexPath.item)
                         collectionView.deleteItems(at: [sourseIndexPath])
                         collectionView.insertItems(at: [destinationIndexPath])
+                        saveGallery()
                     })
                     coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
                 }
@@ -111,8 +113,9 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                 let aspectRatio = width/height
                 DispatchQueue.main.async {
                     self.collectionView.performBatchUpdates({
-                        self.gallery.append(Image(url: url, aspectRatio: Double(aspectRatio)))
-                        self.collectionView.insertItems(at: [IndexPath(item: self.gallery.count-1, section: 0)])
+                        self.gallery.images.append(Image(url: url, aspectRatio: Double(aspectRatio)))
+                        self.collectionView.insertItems(at: [IndexPath(item: self.gallery.images.count-1, section: 0)])
+                        self.saveGallery()
                     } )
                 }
             }
@@ -156,7 +159,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         if let image = (collectionView.cellForItem(at: indexPath) as? ImageGalleryCollectionViewCell)?.imageView.image {
             let itemProvider = NSItemProvider(object: image)
             let dragItem = UIDragItem(itemProvider: itemProvider)
-            dragItem.localObject = gallery[indexPath.item]
+            dragItem.localObject = gallery.images[indexPath.item]
             return [dragItem]
         } else {
         return []
@@ -167,10 +170,15 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     func remove(at indexPath: IndexPath) {
         collectionView.performBatchUpdates({
-            gallery.remove(at: indexPath.item)
+            gallery.images.remove(at: indexPath.item)
             collectionView.deleteItems(at: [indexPath])
+            saveGallery()
         })
      }
+    
+    private func saveGallery() {
+        
+    }
     
 }
 

@@ -1,15 +1,33 @@
 import UIKit
 
-class DocumentsTableViewController: UITableViewController {
+class DocumentsTableViewController: UITableViewController,
+    UITableViewDragDelegate,
+    UITableViewDropDelegate
+{
 
-    var galleries = [Gallery]()
-    var removedGalleries = [Gallery]()
+    // MARK: - Model
+    var galleries = Galleries() { didSet {
+        if let json = galleries.json {
+            if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("galleries") {
+                try? json.write(to: url)
+            }
+        }
+        }}
     
     private var galleriesName: [String] {
-        return galleries.map { String($0.name) } + removedGalleries.map { String($0.name) }
+        return galleries.existing.map {String($0.name) } + galleries.removed.map {String($0.name) }
     }
     
     // MARK: - ViewController lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.dragDelegate = self
+        tableView.dropDelegate = self
+        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("galleries"), let jsonData = try? Data(contentsOf: url),let newValue = Galleries(json: jsonData) {
+            galleries = newValue
+        }
+    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -25,7 +43,7 @@ class DocumentsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? galleries.count : removedGalleries.count
+        return section == 0 ? galleries.existing.count : galleries.removed.count
     }
 
     
@@ -34,12 +52,12 @@ class DocumentsTableViewController: UITableViewController {
         
         if let galleryCell = cell as? DocumentTableViewCell {
             if indexPath.section == 0 {
-                galleryCell.textField.text = galleries[indexPath.row].name
+                galleryCell.textField.text = galleries.existing[indexPath.row].name
                 galleryCell.completionHandler = {
                     self.change(cell: galleryCell, at: indexPath)
                 }
             } else {
-                galleryCell.textField.text = removedGalleries[indexPath.row].name
+                galleryCell.textField.text = galleries.removed[indexPath.row].name
             }
             return galleryCell
         }
@@ -60,15 +78,15 @@ class DocumentsTableViewController: UITableViewController {
         if editingStyle == .delete {
             if indexPath.section == 0 {
                 tableView.performBatchUpdates({
-                    removedGalleries.append(galleries[indexPath.row])
-                    galleries.remove(at: indexPath.row)
+                    galleries.removed.append(galleries.existing[indexPath.row])
+                    galleries.existing.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
-                    tableView.insertRows(at: [IndexPath(row: removedGalleries.count - 1, section: 1)], with: .fade)
+                    tableView.insertRows(at: [IndexPath(row: galleries.removed.count - 1, section: 1)], with: .fade)
                 })
             }
             else  {
                 tableView.performBatchUpdates({
-                    removedGalleries.remove(at: indexPath.row)
+                    galleries.removed.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 })
             }
@@ -78,9 +96,9 @@ class DocumentsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let undeleteAction = UIContextualAction(style: .normal, title: "Undelete") { (_, _, done) in
             self.tableView.performBatchUpdates({
-                self.galleries.append(self.removedGalleries[indexPath.row])
-                self.removedGalleries.remove(at: indexPath.row)
-                self.tableView.insertRows(at: [IndexPath(row: self.galleries.count-1, section: 0)], with: .fade)
+                self.galleries.existing.append(self.galleries.removed[indexPath.row])
+                self.galleries.removed.remove(at: indexPath.row)
+                self.tableView.insertRows(at: [IndexPath(row: self.galleries.existing.count-1, section: 0)], with: .fade)
                 self.tableView.deleteRows(at: [indexPath], with: .fade)
             })
             done(true)
@@ -99,7 +117,7 @@ class DocumentsTableViewController: UITableViewController {
           segue.identifier == "showGallery",
           let destination = segue.destination.contents as? ImageGalleryCollectionViewController
         {
-            destination.galleryName = galleries[indexPath.row].name
+            destination.galleryName = galleries.existing[indexPath.row].name
         }
     }
     
@@ -115,11 +133,11 @@ class DocumentsTableViewController: UITableViewController {
     // MARK: - IBAction
     
     @IBAction func addNewDocument(_ sender: UIBarButtonItem) {
-        if galleries.isEmpty { galleries.append(Gallery(name: "Untitled"))}
+        if galleries.existing.isEmpty { galleries.existing.append(Gallery(name: "Untitled"))}
         else {
-            galleries.append(Gallery(name: "Untitled \(galleries.count)"))
+            galleries.existing.append(Gallery(name:"Untitled \(galleries.existing.count)"))
         }
-        tableView.insertRows(at: [IndexPath(row: galleries.count - 1, section: 0)], with: .fade)
+        tableView.insertRows(at: [IndexPath(row: galleries.existing.count - 1, section: 0)], with: .fade)
     }
 
     // MARK: - Changing gallery name
@@ -130,7 +148,7 @@ class DocumentsTableViewController: UITableViewController {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default))
         self.present(alert, animated: true) {
-            cell.textField.text = self.galleries[indexPath.row].name
+            cell.textField.text = self.galleries.existing[indexPath.row].name
             }
         }
             if cell.textField.text == "" {
@@ -139,8 +157,44 @@ class DocumentsTableViewController: UITableViewController {
                 showErrorAlert(message: "You alreay have this gallery")
             }
             else {
-                galleries[indexPath.row].name = cell.textField.text!
+                galleries.existing[indexPath.row].name = cell.textField.text!
                 }
         }
+    
+    
+    // MARK: - Drag&Drop delegates
+    
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        session.localContext = indexPath
+        if let text = (tableView.cellForRow(at: indexPath) as? DocumentTableViewCell)?.textField.text {
+            let itemProvider = NSItemProvider(object: text as NSString)
+            let dragItem = UIDragItem(itemProvider: itemProvider)
+            dragItem.localObject = text
+            return [dragItem]
+        }
+        return []
+    }
+    
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(row: 0, section: 0)
+        for item in coordinator.items {
+            if let sourseIndexPath = item.sourceIndexPath, let text = item.dragItem.localObject as? String {
+                tableView.performBatchUpdates({
+                    galleries.existing.remove(at: sourseIndexPath.row)
+                    galleries.existing.insert(Gallery(name: text), at: destinationIndexPath.row)
+                    tableView.deleteRows(at: [sourseIndexPath], with: .fade)
+                    tableView.insertRows(at: [destinationIndexPath], with: .fade)
+                })
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
+        return session.canLoadObjects(ofClass: String.self) && (session.localDragSession?.localContext as? IndexPath)!.section != 1
+    }
+
+    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+        return UITableViewDropProposal(operation: destinationIndexPath?.section == 0 ? .move : .forbidden, intent: .insertAtDestinationIndexPath)
+    }
     
 }

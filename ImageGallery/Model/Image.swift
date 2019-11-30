@@ -1,6 +1,6 @@
 import Foundation
 
-struct Image {
+struct Image: Codable {
     var url:URL
     var aspectRatio:Double
 }
