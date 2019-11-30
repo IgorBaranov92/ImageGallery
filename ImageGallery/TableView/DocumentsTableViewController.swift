@@ -71,7 +71,7 @@ class DocumentsTableViewController: UITableViewController,
     // MARK: - TableViewDelegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+//        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -135,9 +135,17 @@ class DocumentsTableViewController: UITableViewController,
     @IBAction func addNewDocument(_ sender: UIBarButtonItem) {
         if galleries.existing.isEmpty { galleries.existing.append(Gallery(name: "Untitled"))}
         else {
-            galleries.existing.append(Gallery(name:"Untitled \(galleries.existing.count)"))
+            galleries.existing.append(Gallery(name:"Untitled \(galleriesName.count)"))
         }
+        
         tableView.insertRows(at: [IndexPath(row: galleries.existing.count - 1, section: 0)], with: .fade)
+        tableView.selectRow(at: IndexPath(row: galleries.existing.count - 1, section: 0), animated: true, scrollPosition: .none)
+//        if UserDefaults.standard.value(forKey: Constants.lastIndexPath) == nil {
+//            UserDefaults.standard.setValue(IndexPath(row: 0, section: 0), forKey: Constants.lastIndexPath)
+//        } else {
+//            UserDefaults.standard.setValue(IndexPath(row: galleries.existing.count-1, section: 0), forKey: Constants.lastIndexPath)
+//        }
+        
     }
 
     // MARK: - Changing gallery name
@@ -197,4 +205,8 @@ class DocumentsTableViewController: UITableViewController,
         return UITableViewDropProposal(operation: destinationIndexPath?.section == 0 ? .move : .forbidden, intent: .insertAtDestinationIndexPath)
     }
     
+}
+
+fileprivate struct Constants {
+    static let lastIndexPath = "lastIndexPath"
 }

@@ -18,6 +18,6 @@ struct Galleries: Codable {
         }
     }
     
-    init() {    }
+    init() {}
     
 }

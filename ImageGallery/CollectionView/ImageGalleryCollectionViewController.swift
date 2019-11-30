@@ -37,6 +37,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         super.viewDidAppear(animated)
         if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(gallery.name)"), let jsonData = try? Data(contentsOf: url),let newValue = Gallery(json: jsonData) {
             gallery = newValue
+            collectionView.reloadData()
         }
     }
 
@@ -141,8 +142,8 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     
     func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
-        let isSelf = (session.localDragSession?.localContext as? UICollectionView) == collectionView
-        return UICollectionViewDropProposal(operation:isSelf ? .move : .copy,intent: .insertAtDestinationIndexPath)
+        let isSelf = session.localDragSession?.localContext == nil
+        return UICollectionViewDropProposal(operation:isSelf ? .copy : .move,intent: .insertAtDestinationIndexPath)
     }
     
     
