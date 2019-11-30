@@ -14,17 +14,18 @@ class TrashView: UIView, UIDropInteractionDelegate {
     }
     
     private func setup() {
+        backgroundColor = .clear
         let dropInteraction = UIDropInteraction(delegate: self)
         addInteraction(dropInteraction)
     }
     
     
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
-        return session.canLoadObjects(ofClass: UIImage.self) && session.canLoadObjects(ofClass: URL.self)
+        return session.canLoadObjects(ofClass: UIImage.self)
     }
     
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
-        return UIDropProposal(operation: .copy)
+        return UIDropProposal(operation: session.localDragSession == nil ? .forbidden : .copy)
     }
     
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {

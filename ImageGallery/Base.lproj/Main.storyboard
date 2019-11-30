@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -75,63 +74,45 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="3" minimumInteritemSpacing="3" id="45x-bz-LLy">
-                            <size key="itemSize" width="364" height="364"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="1" minimumInteritemSpacing="1" id="45x-bz-LLy">
+                            <size key="itemSize" width="300" height="300"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="3" minY="3" maxX="3" maxY="3"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="redraw" reuseIdentifier="imageGallery" id="zBk-9f-KAE" customClass="ImageGalleryCollectionViewCell" customModule="ImageGallery" customModuleProvider="target">
-                                <rect key="frame" x="3" y="3" width="364" height="364"/>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="imageGallery" id="zBk-9f-KAE" customClass="ImageGalleryCollectionViewCell" customModule="ImageGallery" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="VUK-za-l8O">
-                                    <rect key="frame" x="0.0" y="0.0" width="364" height="364"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                    <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Eb5-RM-bUC">
-                                            <rect key="frame" x="0.0" y="0.0" width="364" height="364"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Eb5-RM-bUC">
+                                            <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
                                         </imageView>
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="HeC-DI-gTf">
-                                            <rect key="frame" x="163.5" y="163.5" width="37" height="37"/>
+                                            <rect key="frame" x="131.5" y="131.5" width="37" height="37"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <color key="color" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </activityIndicatorView>
                                     </subviews>
-                                    <constraints>
-                                        <constraint firstItem="Eb5-RM-bUC" firstAttribute="top" secondItem="VUK-za-l8O" secondAttribute="top" id="Mbq-2F-OxL"/>
-                                        <constraint firstItem="Eb5-RM-bUC" firstAttribute="leading" secondItem="VUK-za-l8O" secondAttribute="leading" id="lk9-ed-cz5"/>
-                                        <constraint firstAttribute="trailing" secondItem="Eb5-RM-bUC" secondAttribute="trailing" id="m7e-iA-mIA"/>
-                                        <constraint firstItem="HeC-DI-gTf" firstAttribute="centerY" secondItem="VUK-za-l8O" secondAttribute="centerY" id="nY1-cS-Umg"/>
-                                        <constraint firstAttribute="bottom" secondItem="Eb5-RM-bUC" secondAttribute="bottom" id="pxr-za-c9U"/>
-                                        <constraint firstItem="HeC-DI-gTf" firstAttribute="centerX" secondItem="VUK-za-l8O" secondAttribute="centerX" id="sx5-jZ-Gfp"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="364" height="364"/>
+                                </view>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="Eb5-RM-bUC" firstAttribute="top" secondItem="zBk-9f-KAE" secondAttribute="top" id="Hgc-Nf-zpN"/>
+                                    <constraint firstAttribute="bottom" secondItem="Eb5-RM-bUC" secondAttribute="bottom" id="JaQ-Cx-hE4"/>
+                                    <constraint firstItem="HeC-DI-gTf" firstAttribute="centerX" secondItem="zBk-9f-KAE" secondAttribute="centerX" id="Lfz-QI-4vn"/>
+                                    <constraint firstAttribute="trailing" secondItem="Eb5-RM-bUC" secondAttribute="trailing" id="bc0-Bu-Swd"/>
+                                    <constraint firstItem="HeC-DI-gTf" firstAttribute="centerY" secondItem="zBk-9f-KAE" secondAttribute="centerY" id="hDG-j4-lml"/>
+                                    <constraint firstItem="Eb5-RM-bUC" firstAttribute="leading" secondItem="zBk-9f-KAE" secondAttribute="leading" id="kge-lI-ecj"/>
+                                </constraints>
                                 <connections>
                                     <outlet property="imageView" destination="Eb5-RM-bUC" id="4wb-oq-vOs"/>
                                     <outlet property="indicator" destination="HeC-DI-gTf" id="usS-0x-8jl"/>
                                     <segue destination="XCD-YF-0rR" kind="show" identifier="image" id="PWS-4T-1eo"/>
                                 </connections>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="placeholder" id="H5B-u4-WAN">
-                                <rect key="frame" x="657" y="3" width="364" height="364"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7ax-en-Fdy">
-                                    <rect key="frame" x="0.0" y="0.0" width="364" height="364"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Hnw-GI-eWm">
-                                            <rect key="frame" x="163.5" y="163.5" width="37" height="37"/>
-                                            <color key="color" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="Hnw-GI-eWm" firstAttribute="centerX" secondItem="7ax-en-Fdy" secondAttribute="centerX" id="gf6-t4-Vku"/>
-                                        <constraint firstItem="Hnw-GI-eWm" firstAttribute="centerY" secondItem="7ax-en-Fdy" secondAttribute="centerY" id="r7h-Me-RbX"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
                             </collectionViewCell>
                         </cells>
                         <connections>

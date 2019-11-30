@@ -17,18 +17,6 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-         let im1 = Image(url: URL(string:
-        "http://www.planetware.com/photos-large/F/france-paris-eiffel-tower.jpg")!,
-        aspectRatio: 0.67)
-        gallery.append(im1)
-        let im2 = Image(url: URL(string:
-        "https://adriatic-lines.com/wp-content/uploads/2015/04/canal-of-Venice.jpg")!,
-        aspectRatio: 1.5)
-        gallery.append(im2)
-        let im3 = Image(url: URL(string:
-        "http://www.picture-newsletter.com/arctic/arctic-12.jpg")!,
-        aspectRatio: 0.8)
-        gallery.append(im3)
         collectionView.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(pinching(_:))))
         navigationItem.title = galleryName
         collectionView.dropDelegate = self
@@ -52,7 +40,6 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             imageGalleryCell.url = gallery[indexPath.item].url
             
         }
-    
         return cell
     }
 
@@ -60,9 +47,9 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - CollectionViewFlowLayout delegate
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        print(calculatedWidth/CGFloat(gallery[indexPath.item].aspectRatio))
+        let ratio = CGFloat(gallery[indexPath.item].aspectRatio)
         return CGSize(width: calculatedWidth,
-                     height: calculatedWidth/CGFloat(gallery[indexPath.item].aspectRatio))
+                     height: calculatedWidth/ratio)
     }
 
     
@@ -76,15 +63,22 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         if recognizer.state == .changed || recognizer.state == .ended {
             scale *= recognizer.scale
             recognizer.scale = 1.0
+            print("scale = \(scale)")
         }
     }
  
     private var calculatedWidth: CGFloat {
-        collectionView.bounds.width/3*scale
+        return (collectionView.bounds.width/2 - 2)*scale
     }
     
+    // MARK: - Segue
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "image", let destination = segue.destination as? ImageViewController, let currentCell = sender as? ImageGalleryCollectionViewCell, let index = collectionView.indexPath(for: currentCell) {
+        if segue.identifier == "image",
+            let destination = segue.destination as? ImageViewController,
+            let currentCell = sender as? ImageGalleryCollectionViewCell,
+            let index = collectionView.indexPath(for: currentCell)
+        {
                 destination.url = gallery[index.item].url
         }
     }
@@ -93,22 +87,6 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - UIDropInteraction delegate
 
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
-//        if coordinator.session.localDragSession == nil { // outside
-//            imageFetcher = ImageFetcher() { (url,image) in
-//                let width = image.size.width
-//                let height = image.size.height
-//                let aspectRatio = width/height
-//                self.gallery.append(Image(url: url, aspectRatio: Double(aspectRatio)))
-//                DispatchQueue.main.async {
-//                    self.collectionView.reloadData()
-//                }
-//            }
-//            coordinator.session.loadObjects(ofClass: NSURL.self) { nsurls in
-//                if let firstURL = nsurls.first as? URL {
-//                    self.imageFetcher.fetch(firstURL.imageURL)
-//                }
-//            }
-//      } else { // local
         let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
         for item in coordinator.items {
             if let sourseIndexPath = item.sourceIndexPath { // local case
@@ -122,33 +100,24 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                     coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
                 }
             } else {//outer case
-                let placeholderContext = coordinator.drop(
-                    item.dragItem,
-                    to: UICollectionViewDropPlaceholder(
-                        insertionIndexPath: destinationIndexPath,
-                        reuseIdentifier: "placeholder"))
-                item.dragItem.itemProvider.loadObject(ofClass: UIImage.self) { (provider, error) in
-                    DispatchQueue.main.async {
-                        placeholderContext.commitInsertion { insertionIndexPath in
-                            if let image = provider as? UIImage,let url = provider as? URL {
-                                let imageWidth = Double(image.size.width)
-                                let imageHeight = Double(image.size.height)
-                                let aspectRatio =  imageWidth/imageHeight
-                                self.collectionView.performBatchUpdates({
-                                    self.gallery.insert(Image(url: url, aspectRatio: aspectRatio), at: insertionIndexPath.item)
-                                    self.collectionView.insertItems(at: [insertionIndexPath])
-                                })
-                                
-                            } else {
-                                placeholderContext.deletePlaceholder()
-                            }
-                        }
-                    }
+                imageFetcher = ImageFetcher() { (url,image) in
+                let width = image.size.width
+                let height = image.size.height
+                let aspectRatio = width/height
+                DispatchQueue.main.async {
+                    self.collectionView.performBatchUpdates({
+                        self.gallery.append(Image(url: url, aspectRatio: Double(aspectRatio)))
+                        self.collectionView.insertItems(at: [IndexPath(item: self.gallery.count-1, section: 0)])
+                    } )
                 }
             }
+                coordinator.session.loadObjects(ofClass: NSURL.self) { nsurls in
+                if let firstURL = nsurls.first as? URL {
+                    self.imageFetcher.fetch(firstURL.imageURL)
+                }
+            }
+            }
         }
-      //  }
-        
     }
     
     

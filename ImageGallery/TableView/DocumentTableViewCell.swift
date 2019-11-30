@@ -10,7 +10,6 @@ class DocumentTableViewCell: UITableViewCell, UITextFieldDelegate {
         }}
         
     var completionHandler: ( () -> Void )?
-    var isRemoved:Bool! = false
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.isUserInteractionEnabled = false
