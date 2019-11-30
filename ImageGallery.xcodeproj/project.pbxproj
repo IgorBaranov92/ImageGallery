@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7818A782239282CA00B2B121 /* Galleries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7818A781239282CA00B2B121 /* Galleries.swift */; };
 		78A919CB238E631B00239860 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78A919CA238E631B00239860 /* AppDelegate.swift */; };
 		78A919D2238E631B00239860 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 78A919D0238E631B00239860 /* Main.storyboard */; };
 		78A919D4238E631C00239860 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 78A919D3238E631C00239860 /* Assets.xcassets */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7818A781239282CA00B2B121 /* Galleries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Galleries.swift; sourceTree = "<group>"; };
 		78A919C7238E631B00239860 /* ImageGallery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageGallery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78A919CA238E631B00239860 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		78A919D1238E631B00239860 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			children = (
 				78A919D0238E631B00239860 /* Main.storyboard */,
 				78A91A0A238E800900239860 /* ImageViewController.swift */,
+				7818A781239282CA00B2B121 /* Galleries.swift */,
 				78A91A04238E6D6700239860 /* Model */,
 				78A91A05238E6D6C00239860 /* View */,
 				78A91A0C238E93E900239860 /* TableView */,
@@ -326,6 +329,7 @@
 				78A919CB238E631B00239860 /* AppDelegate.swift in Sources */,
 				78A91A03238E69A600239860 /* ImageGalleryCollectionViewCell.swift in Sources */,
 				78A919FC238E679800239860 /* TrashView.swift in Sources */,
+				7818A782239282CA00B2B121 /* Galleries.swift in Sources */,
 				78A91A10238E940C00239860 /* DocumentTableViewCell.swift in Sources */,
 				78A91A0E238E93FF00239860 /* DocumentsTableViewController.swift in Sources */,
 				78A91A0B238E800900239860 /* ImageViewController.swift in Sources */,

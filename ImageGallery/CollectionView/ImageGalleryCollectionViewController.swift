@@ -3,15 +3,20 @@ import UIKit
 
 class ImageGalleryCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout,
     UICollectionViewDropDelegate,
-    UICollectionViewDragDelegate
+    UICollectionViewDragDelegate,
+    Removeable
 {
-
+ 
     var gallery = [Image]()
     var galleryName = String()
     
     private var imageFetcher: ImageFetcher!
     
     private var scale: CGFloat = 1 { didSet { flowLayout?.invalidateLayout() }}
+    
+    @IBOutlet private weak var trashView: TrashView! { didSet {
+        trashView.delegate = self
+        }}
     
     // MARK: - ViewController lifecycle
     
@@ -139,7 +144,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - UIDragInteractionDelegate
     
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        session.localContext = collectionView
+        session.localContext = indexPath
         return dragItems(at: indexPath)
      }
     
@@ -157,6 +162,15 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         return []
         }
     }
-        
+    
+     // MARK: - Protocol
+    
+    func remove(at indexPath: IndexPath) {
+        collectionView.performBatchUpdates({
+            gallery.remove(at: indexPath.item)
+            collectionView.deleteItems(at: [indexPath])
+        })
+     }
+    
 }
 
