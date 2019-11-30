@@ -7,9 +7,13 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     Removeable
 {
  
+    // MARK: - Model
+    
     var galleryName = String()
     
-    private lazy var gallery = Gallery(name:galleryName)
+    private lazy var gallery = Gallery(name: galleryName)
+    
+    // MARK: - Private API
     
     private var imageFetcher: ImageFetcher!
     
@@ -27,6 +31,13 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         navigationItem.title = galleryName
         collectionView.dropDelegate = self
         collectionView.dragDelegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(gallery.name)"), let jsonData = try? Data(contentsOf: url),let newValue = Gallery(json: jsonData) {
+            gallery = newValue
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -177,8 +188,10 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
      }
     
     private func saveGallery() {
-        
+        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(galleryName)"),let json = gallery.json {
+            try? json.write(to: url)
+        }
     }
-    
+  
 }
 

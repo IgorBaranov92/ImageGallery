@@ -1,6 +1,7 @@
 import Foundation
 
 struct Gallery: Codable {
+    
     var name:String
     var images = [Image]()
     
@@ -10,6 +11,14 @@ struct Gallery: Codable {
     
     var json: Data? {
         return try? JSONEncoder().encode(self)
+    }
+    
+    init?(json:Data) {
+        if let newValue = try? JSONDecoder().decode(Gallery.self, from: json) {
+            self = newValue
+        } else {
+            return nil
+        }
     }
     
 }
