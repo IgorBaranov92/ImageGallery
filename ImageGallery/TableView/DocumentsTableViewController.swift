@@ -53,8 +53,8 @@ class DocumentsTableViewController: UITableViewController,
         if let galleryCell = cell as? DocumentTableViewCell {
             if indexPath.section == 0 {
                 galleryCell.textField.text = galleries.existing[indexPath.row].name
-                galleryCell.completionHandler = {
-                    self.change(cell: galleryCell, at: indexPath)
+                galleryCell.completionHandler = { [weak self,unowned galleryCell] in
+                    self?.change(cell: galleryCell, at: indexPath)
                 }
             } else {
                 galleryCell.textField.text = galleries.removed[indexPath.row].name
@@ -65,15 +65,12 @@ class DocumentsTableViewController: UITableViewController,
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "Documents" : "Recently deleted"
+        return section == 0 ? "Documents" : galleries.removed.count == 0 ? nil : "Recently deleted"
     }
   
     // MARK: - TableViewDelegate
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
+   
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if indexPath.section == 0 {
@@ -86,6 +83,10 @@ class DocumentsTableViewController: UITableViewController,
             }
             else  {
                 tableView.performBatchUpdates({
+                    if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(galleries.removed[indexPath.row].name)"),let json = galleries.removed[indexPath.row].json {
+                        galleries.removed[indexPath.row].images.removeAll()
+                        try? json.write(to: url)
+                    }
                     galleries.removed.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                 })
@@ -118,6 +119,10 @@ class DocumentsTableViewController: UITableViewController,
           let destination = segue.destination.contents as? ImageGalleryCollectionViewController
         {
             destination.galleryName = galleries.existing[indexPath.row].name
+        } else if sender as? DocumentsTableViewController == self,
+                  segue.identifier == "showGallery",
+                  let destination = segue.destination.contents as? ImageGalleryCollectionViewController {
+        destination.galleryName = galleries.existing[galleries.existing.count-1].name
         }
     }
     
@@ -139,13 +144,13 @@ class DocumentsTableViewController: UITableViewController,
         }
         
         tableView.insertRows(at: [IndexPath(row: galleries.existing.count - 1, section: 0)], with: .fade)
-        tableView.selectRow(at: IndexPath(row: galleries.existing.count - 1, section: 0), animated: true, scrollPosition: .none)
-//        if UserDefaults.standard.value(forKey: Constants.lastIndexPath) == nil {
-//            UserDefaults.standard.setValue(IndexPath(row: 0, section: 0), forKey: Constants.lastIndexPath)
-//        } else {
-//            UserDefaults.standard.setValue(IndexPath(row: galleries.existing.count-1, section: 0), forKey: Constants.lastIndexPath)
-//        }
-        
+        tableView.selectRow(at: IndexPath(row: galleries.existing.count - 1, section: 0), animated: true, scrollPosition: .bottom)
+        if UserDefaults.standard.value(forKey: Constants.lastRow) == nil {
+            UserDefaults.standard.set(0, forKey: Constants.lastRow)
+        } else {
+            UserDefaults.standard.set(galleries.existing.count - 1, forKey: Constants.lastRow)
+        }
+        performSegue(withIdentifier: "showGallery", sender: self)
     }
 
     // MARK: - Changing gallery name
@@ -208,5 +213,5 @@ class DocumentsTableViewController: UITableViewController,
 }
 
 fileprivate struct Constants {
-    static let lastIndexPath = "lastIndexPath"
+    static let lastRow = "lastIndexPath"
 }

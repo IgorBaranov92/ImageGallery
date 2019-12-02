@@ -61,6 +61,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="zi6-ed-xFg" kind="showDetail" identifier="showGallery" id="GCj-qL-Orm"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TTv-BY-ha7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -245,6 +248,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="417-1L-vQU"/>
+        <segue reference="GCj-qL-Orm"/>
     </inferredMetricsTieBreakers>
 </document>
