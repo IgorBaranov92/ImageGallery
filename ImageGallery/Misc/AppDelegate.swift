@@ -7,7 +7,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         if UserDefaults.standard.integer(forKey: "lastRow") == 0 {
-            UserDefaults.standard.set(-1, forKey: "lastRow")
+            UserDefaults.standard.set(0, forKey: "lastRow")
         }
         return true
     }

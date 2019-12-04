@@ -18,16 +18,10 @@ class DocumentsTableViewController: UITableViewController,
         }
         }}
     
-    
-    private var row:Int {
-        UserDefaults.standard.integer(forKey: Constants.lastRow)
-    }
-    
+    private var row:Int { UserDefaults.standard.integer(forKey: Constants.lastRow) }
     private var firstLaunch = true
-    
     private var scaledFont:UIFont {
-        let font = UIFont(name: "Cochin", size: 25)
-        return UIFontMetrics(forTextStyle: .body).scaledFont(for: font!)
+        UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont(name: "Cochin", size: 25)!)
     }
     
     
@@ -50,7 +44,7 @@ class DocumentsTableViewController: UITableViewController,
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if row >= 0 && firstLaunch {
+        if row >= 0 && firstLaunch && !galleries.existing.isEmpty {
             tableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .bottom)
             performSegue(withIdentifier: "showGallery", sender: self)
             firstLaunch = false
@@ -75,7 +69,7 @@ class DocumentsTableViewController: UITableViewController,
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-          return section == 0 ? "Documents" : galleries.removed.count == 0 ? nil : "Recently deleted"
+          return section == 0 ? "Galleries" : galleries.removed.count == 0 ? nil : "Recently deleted"
       }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -95,7 +89,9 @@ class DocumentsTableViewController: UITableViewController,
         }
         return cell
     }
-      
+    
+    // MARK: - TableViewDelegate
+   
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         UserDefaults.standard.set(indexPath.row, forKey: Constants.lastRow)
@@ -109,8 +105,6 @@ class DocumentsTableViewController: UITableViewController,
         return scaledFont.pointSize
     }
     
-    // MARK: - TableViewDelegate
-   
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if indexPath.section == 0 {
@@ -121,6 +115,7 @@ class DocumentsTableViewController: UITableViewController,
                     tableView.deleteRows(at: [indexPath], with: .fade)
                     tableView.insertRows(at: [IndexPath(row: galleries.removed.count - 1, section: 1)], with: .fade)
                 })
+                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                 performSegue(withIdentifier: "showGallery", sender: self)
             }
             else  {
@@ -131,6 +126,9 @@ class DocumentsTableViewController: UITableViewController,
                     }
                     galleries.removed.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
+                    if galleries.removed.isEmpty {
+                        tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                    }
                 })
             }
         }
@@ -144,6 +142,9 @@ class DocumentsTableViewController: UITableViewController,
                 self.tableView.insertRows(at: [IndexPath(row: self.galleries.existing.count-1, section: 0)], with: .fade)
                 self.tableView.deleteRows(at: [indexPath], with: .fade)
             })
+            if self.galleries.removed.isEmpty {
+                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+            }
             UserDefaults.standard.set(self.galleries.existing.count-1, forKey: Constants.lastRow)
             self.performSegue(withIdentifier: "showGallery", sender: self)
             done(true)
@@ -167,7 +168,6 @@ class DocumentsTableViewController: UITableViewController,
                   segue.identifier == "showGallery",
                   let destination = segue.destination.contents as? ImageGalleryCollectionViewController {
             if row >= 0 {
-                print(row)
                 destination.galleryName = galleries.existing[row].name
             }
         }
@@ -185,11 +185,7 @@ class DocumentsTableViewController: UITableViewController,
     // MARK: - IBAction
     
     @IBAction func addNewDocument(_ sender: UIBarButtonItem) {
-        if galleries.existing.isEmpty { galleries.existing.append(Gallery(name: "Untitled"))}
-        else {
-            galleries.existing.append(Gallery(name:"Untitled \(galleriesName.count)"))
-        }
-        
+        galleries.existing.append(Gallery(name: "Untitled".madeUnique(withRespectTo: galleries.existing.map {$0.name} + galleries.removed.map {$0.name})))
         tableView.insertRows(at: [IndexPath(row: galleries.existing.count - 1, section: 0)], with: .fade)
         tableView.selectRow(at: IndexPath(row: galleries.existing.count - 1, section: 0), animated: true, scrollPosition: .bottom)
         UserDefaults.standard.set(galleries.existing.count - 1, forKey: Constants.lastRow)
@@ -200,23 +196,14 @@ class DocumentsTableViewController: UITableViewController,
     // MARK: - Changing gallery name
     
     private func change(cell:DocumentTableViewCell,at indexPath:IndexPath) {
-        
-        func showErrorAlert(message:String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default))
-        self.present(alert, animated: true) {
-            cell.textField.text = self.galleries.existing[indexPath.row].name
-            }
-        }
-            if cell.textField.text == "" {
-                showErrorAlert(message: "Gallery name shouldn't be empty")
-            } else if !galleriesName.contains(cell.textField.text!) && galleries.existing[indexPath.item].name != cell.textField.text! {
-                galleries.existing[indexPath.row].name = cell.textField.text!
-                performSegue(withIdentifier: "showGallery", sender: self)
-            } else {
-                showErrorAlert(message: "You already have this gallery")
-        }
-        }
+        galleries.existing[indexPath.row].name = cell.textField.text!
+//        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = try? Data(contentsOf: url) {
+//            let gallery = Gallery(json: json)!
+//
+//        }
+        UserDefaults.standard.set(indexPath.item, forKey: Constants.lastRow)
+        performSegue(withIdentifier: "showGallery", sender: self)
+    }
     
     
     // MARK: - Drag&Drop delegates

@@ -11,10 +11,9 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     var galleryName = String()
     
-    private lazy var gallery = Gallery(name: galleryName)
-    
     // MARK: - Private API
     
+    private lazy var gallery = Gallery(name: galleryName)
     private var imageFetcher: ImageFetcher!
     
     
@@ -70,7 +69,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let ratio = CGFloat(gallery.images[indexPath.item].aspectRatio)
-        return CGSize(width: calculatedWidth,
+        return CGSize(width: min(calculatedWidth,collectionView.bounds.width - 10),
                      height: calculatedWidth/ratio)
     }
 
@@ -82,15 +81,18 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - Gestures
     
     @objc private func pinching(_ recognizer:UIPinchGestureRecognizer) {
-        if recognizer.state == .changed || recognizer.state == .ended {
+        if recognizer.state == .changed  {
             gallery.scale *= Double(recognizer.scale)
             recognizer.scale = 1.0
+            print(gallery.scale)
             flowLayout?.invalidateLayout()
+        } else if recognizer.state == .ended {
+            saveGallery()
         }
     }
  
     private var calculatedWidth: CGFloat {
-        return (collectionView.bounds.width/2 - 2)*CGFloat(gallery.scale)
+        return (collectionView.bounds.width/2 - 4)*CGFloat(gallery.scale)
     }
     
     // MARK: - Segue
