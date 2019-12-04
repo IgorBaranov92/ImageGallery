@@ -1,9 +1,8 @@
 import UIKit
 
-@IBDesignable
-class TrashView: UIView, UIDropInteractionDelegate {
+class BinView: UIView, UIDropInteractionDelegate {
 
-    weak var delegate: Removeable?
+    weak var delegate: BinViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -49,6 +48,6 @@ class TrashView: UIView, UIDropInteractionDelegate {
 }
 
 
-protocol Removeable: class {
+protocol BinViewDelegate: class {
     func remove(at indexPath:IndexPath)
 }

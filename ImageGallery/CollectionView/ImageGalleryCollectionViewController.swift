@@ -4,7 +4,7 @@ import UIKit
 class ImageGalleryCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout,
     UICollectionViewDropDelegate,
     UICollectionViewDragDelegate,
-    Removeable
+    BinViewDelegate
 {
  
     // MARK: - Model
@@ -17,9 +17,8 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     private var imageFetcher: ImageFetcher!
     
-    private var scale: CGFloat = 1 { didSet { flowLayout?.invalidateLayout() }}
     
-    @IBOutlet private weak var trashView: TrashView! { didSet {
+    @IBOutlet private weak var trashView: BinView! { didSet {
         trashView.delegate = self
         }}
     
@@ -41,6 +40,11 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        saveGallery()
+    }
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         flowLayout?.invalidateLayout()
@@ -79,14 +83,14 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     @objc private func pinching(_ recognizer:UIPinchGestureRecognizer) {
         if recognizer.state == .changed || recognizer.state == .ended {
-            scale *= recognizer.scale
+            gallery.scale *= Double(recognizer.scale)
             recognizer.scale = 1.0
-            print("scale = \(scale)")
+            flowLayout?.invalidateLayout()
         }
     }
  
     private var calculatedWidth: CGFloat {
-        return (collectionView.bounds.width/2 - 2)*scale
+        return (collectionView.bounds.width/2 - 2)*CGFloat(gallery.scale)
     }
     
     // MARK: - Segue
@@ -149,7 +153,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
     func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
         if session.localDragSession?.localContext == nil { // outside
-            return session.canLoadObjects(ofClass: NSURL.self) && session.canLoadObjects(ofClass: UIImage.self)
+            return session.canLoadObjects(ofClass: NSURL.self) && session.canLoadObjects(ofClass: UIImage.self) && !galleryName.isEmpty
         } else { // local
             return session.canLoadObjects(ofClass: UIImage.self)
         }

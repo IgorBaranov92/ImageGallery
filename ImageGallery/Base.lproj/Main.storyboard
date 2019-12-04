@@ -12,7 +12,7 @@
         <scene sceneID="FnQ-fy-Vbk">
             <objects>
                 <tableViewController id="klG-SW-r2i" customClass="DocumentsTableViewController" customModule="ImageGallery" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="8Zq-BK-aui">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="60" sectionHeaderHeight="28" sectionFooterHeight="28" id="8Zq-BK-aui">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -27,9 +27,6 @@
                                         <textField opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RaR-xp-d4y">
                                             <rect key="frame" x="16" y="5" width="343" height="50"/>
                                             <gestureRecognizers/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="mbS-T6-zFs"/>
-                                            </constraints>
                                             <fontDescription key="fontDescription" name="Cochin" family="Cochin" pointSize="25"/>
                                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                         </textField>
@@ -125,7 +122,7 @@
                     </collectionView>
                     <navigationItem key="navigationItem" id="2Sb-ud-gUx">
                         <barButtonItem key="rightBarButtonItem" id="Q5u-ST-feT">
-                            <view key="customView" contentMode="scaleToFill" id="VlL-2i-87j" customClass="TrashView" customModule="ImageGallery" customModuleProvider="target">
+                            <view key="customView" contentMode="scaleToFill" id="VlL-2i-87j" customClass="BinView" customModule="ImageGallery" customModuleProvider="target">
                                 <rect key="frame" x="777" y="6.5" width="227" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

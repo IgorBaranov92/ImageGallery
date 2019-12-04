@@ -22,6 +22,7 @@ class DocumentTableViewCell: UITableViewCell, UITextFieldDelegate {
         return true
     }
     
+    
     @objc private func doubleTap(_ recognizer:UITapGestureRecognizer) {
         if recognizer.state == .ended {
             textField.isUserInteractionEnabled = true

@@ -3,6 +3,7 @@ import Foundation
 struct Gallery: Codable {
     
     var name:String
+    var scale = 1.0
     var images = [Image]()
     
     init(name:String) {
