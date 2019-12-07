@@ -69,7 +69,7 @@ class DocumentsTableViewController: UITableViewController,
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-          return section == 0 ? "Galleries" : galleries.removed.count == 0 ? nil : "Recently deleted"
+          return section == 0 ? nil : galleries.removed.count == 0 ? nil : "Recently deleted"
       }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -84,6 +84,7 @@ class DocumentsTableViewController: UITableViewController,
                 }
             } else {
                 galleryCell.textField.text = galleries.removed[indexPath.row].name
+                galleryCell.isUserInteractionEnabled = false
             }
             return galleryCell
         }
@@ -116,7 +117,7 @@ class DocumentsTableViewController: UITableViewController,
                     tableView.insertRows(at: [IndexPath(row: galleries.removed.count - 1, section: 1)], with: .fade)
                 })
                 tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
-                performSegue(withIdentifier: "showGallery", sender: self)
+                performSegue(withIdentifier: Constants.segueID, sender: self)
             }
             else  {
                 tableView.performBatchUpdates({
@@ -146,7 +147,7 @@ class DocumentsTableViewController: UITableViewController,
                 tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
             }
             UserDefaults.standard.set(self.galleries.existing.count-1, forKey: Constants.lastRow)
-            self.performSegue(withIdentifier: "showGallery", sender: self)
+            self.performSegue(withIdentifier: Constants.segueID, sender: self)
             done(true)
         }
         undeleteAction.backgroundColor = .blue
@@ -160,12 +161,12 @@ class DocumentsTableViewController: UITableViewController,
        if let cell = sender as? DocumentTableViewCell,
           let indexPath = tableView.indexPath(for: cell),
           indexPath.section == 0,
-          segue.identifier == "showGallery",
+          segue.identifier == Constants.segueID,
           let destination = segue.destination.contents as? ImageGalleryCollectionViewController
         {
             destination.galleryName = galleries.existing[indexPath.row].name
         } else if sender as? DocumentsTableViewController == self,
-                  segue.identifier == "showGallery",
+                  segue.identifier == Constants.segueID,
                   let destination = segue.destination.contents as? ImageGalleryCollectionViewController {
             if row >= 0 {
                 destination.galleryName = galleries.existing[row].name
@@ -173,23 +174,15 @@ class DocumentsTableViewController: UITableViewController,
         }
     }
     
-    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        if let cell = sender as? DocumentTableViewCell,
-           let indexPath = tableView.indexPath(for: cell),
-           indexPath.section == 1 {
-            return false
-        }
-        return true
-    }
     
     // MARK: - IBAction
     
     @IBAction func addNewDocument(_ sender: UIBarButtonItem) {
-        galleries.existing.append(Gallery(name: "Untitled".madeUnique(withRespectTo: galleries.existing.map {$0.name} + galleries.removed.map {$0.name})))
+        galleries.existing.append(Gallery(name: "Untitled".madeUnique(withRespectTo: galleriesName)))
         tableView.insertRows(at: [IndexPath(row: galleries.existing.count - 1, section: 0)], with: .fade)
         tableView.selectRow(at: IndexPath(row: galleries.existing.count - 1, section: 0), animated: true, scrollPosition: .bottom)
         UserDefaults.standard.set(galleries.existing.count - 1, forKey: Constants.lastRow)
-        performSegue(withIdentifier: "showGallery", sender: self)
+        performSegue(withIdentifier: Constants.segueID, sender: self)
     }
 
     
@@ -202,7 +195,7 @@ class DocumentsTableViewController: UITableViewController,
 //
 //        }
         UserDefaults.standard.set(indexPath.item, forKey: Constants.lastRow)
-        performSegue(withIdentifier: "showGallery", sender: self)
+        performSegue(withIdentifier: Constants.segueID, sender: self)
     }
     
     
@@ -228,7 +221,11 @@ class DocumentsTableViewController: UITableViewController,
                     galleries.existing.insert(Gallery(name: text), at: destinationIndexPath.row)
                     tableView.deleteRows(at: [sourseIndexPath], with: .fade)
                     tableView.insertRows(at: [destinationIndexPath], with: .fade)
+                },completion: { completed in
+                    UserDefaults.standard.set(destinationIndexPath.item, forKey: Constants.lastRow)
+                    self.performSegue(withIdentifier: Constants.segueID, sender: self)
                 })
+                coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
             }
         }
     }
@@ -245,4 +242,5 @@ class DocumentsTableViewController: UITableViewController,
 
 fileprivate struct Constants {
     static let lastRow = "lastRow"
+    static let segueID = "showGallery"
 }

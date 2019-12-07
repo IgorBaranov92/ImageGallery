@@ -1,7 +1,7 @@
 import UIKit
 
 
-class ImageFetcherr {
+class ImageFetcher {
     
     var handler:  (URL,UIImage) -> Void
     
@@ -13,8 +13,13 @@ class ImageFetcherr {
     
     private func fetch(_ url:URL) {
         let session = URLSession(configuration: .default)
-        let task = session.dataTask(with: url) { (data, response, erro) in
-            
+        let task = session.dataTask(with: url.imageURL) { (data, response, error) in
+            DispatchQueue.global(qos: .userInitiated).async {
+                guard let httpResponce = response as? HTTPURLResponse  else { return }
+                if error == nil,(200...299).contains(httpResponce.statusCode), let data = data,let image = UIImage(data: data) {
+                    self.handler(url,image)
+                }
+            }
         }
         task.resume()
     }

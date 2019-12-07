@@ -35,8 +35,9 @@ class BinView: UIView, UIDropInteractionDelegate {
     }
     
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
-        if let indexPath = session.localDragSession?.localContext as? IndexPath {
-            delegate?.remove(at: indexPath)
+        if let indexPaths = session.localDragSession?.localContext as? [IndexPath] {
+            print(indexPaths)
+            delegate?.remove(at: indexPaths)
         }
     }
     
@@ -49,5 +50,5 @@ class BinView: UIView, UIDropInteractionDelegate {
 
 
 protocol BinViewDelegate: class {
-    func remove(at indexPath:IndexPath)
+    func remove(at indexPaths:[IndexPath])
 }

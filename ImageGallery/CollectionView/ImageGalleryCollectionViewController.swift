@@ -27,6 +27,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         super.viewDidLoad()
         collectionView.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(pinching(_:))))
         navigationItem.title = galleryName
+        navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
         collectionView.dropDelegate = self
         collectionView.dragDelegate = self
     }
@@ -69,7 +70,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let ratio = CGFloat(gallery.images[indexPath.item].aspectRatio)
-        return CGSize(width: min(calculatedWidth,collectionView.bounds.width - 10),
+        return CGSize(width: calculatedWidth,
                      height: calculatedWidth/ratio)
     }
 
@@ -86,13 +87,16 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
             recognizer.scale = 1.0
             print(gallery.scale)
             flowLayout?.invalidateLayout()
+            if gallery.scale <= Constants.lowerBound { gallery.scale = Constants.lowerBound }
+            if gallery.scale >= Constants.upperBound { gallery.scale = Constants.upperBound}
         } else if recognizer.state == .ended {
             saveGallery()
         }
     }
- 
+    
     private var calculatedWidth: CGFloat {
-        return (collectionView.bounds.width/2 - 4)*CGFloat(gallery.scale)
+        let itemsCount = CGFloat(round(Constants.upperBound/gallery.scale))
+        return (collectionView.bounds.width/itemsCount-4)
     }
     
     // MARK: - Segue
@@ -125,22 +129,24 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                     coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
                 }
             } else {//outer case
-                imageFetcher = ImageFetcher() { (url,image) in
-                let width = image.size.width
-                let height = image.size.height
-                let aspectRatio = width/height
-                DispatchQueue.main.async {
-                    self.collectionView.performBatchUpdates({
-                        self.gallery.images.append(Image(url: url, aspectRatio: Double(aspectRatio)))
-                        self.collectionView.insertItems(at: [IndexPath(item: self.gallery.images.count-1, section: 0)])
-                        self.saveGallery()
-                    } )
-                }
-            }
+                let placeholder = coordinator.drop(item.dragItem, to: UICollectionViewDropPlaceholder(insertionIndexPath: destinationIndexPath, reuseIdentifier: "placeholder"))
+                
                 coordinator.session.loadObjects(ofClass: NSURL.self) { nsurls in
                 if let firstURL = nsurls.first as? URL {
-                    self.imageFetcher.fetch(firstURL.imageURL)
-                }
+                    self.imageFetcher = ImageFetcher(url:firstURL.imageURL) { (url,image) in
+                        let aspectRatio = image.size.width/image.size.height
+                        self.gallery.images.append(Image(url: url, aspectRatio: Double(aspectRatio)))
+//                        self.gallery.images.insert(Image(url: url, aspectRatio: Double(aspectRatio)), at: destinationIndexPath.item)
+                        DispatchQueue.main.async {
+                            self.collectionView.performBatchUpdates({
+                                self.collectionView.insertItems(at: [IndexPath(item: self.gallery.images.count-1, section: 0)])
+                                
+                            },completion: { completed in
+                                self.saveGallery()
+                                placeholder.deletePlaceholder()
+                            } )
+                        }
+                    }                }
             }
             }
         }
@@ -165,11 +171,15 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - UIDragInteractionDelegate
     
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        session.localContext = indexPath
+        session.localContext = [indexPath]
         return dragItems(at: indexPath)
      }
     
     func collectionView(_ collectionView: UICollectionView, itemsForAddingTo session: UIDragSession, at indexPath: IndexPath, point: CGPoint) -> [UIDragItem] {
+        if var paths = session.localContext as? [IndexPath] {
+            paths.append(indexPath)
+            session.localContext = paths
+        }
         return dragItems(at: indexPath)
     }
     
@@ -186,11 +196,15 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     
      // MARK: - Protocol
     
-    func remove(at indexPath: IndexPath) {
+    func remove(at indexPaths: [IndexPath]) {
+        let indexes = indexPaths.map { Int($0.item)}
         collectionView.performBatchUpdates({
-            gallery.images.remove(at: indexPath.item)
-            collectionView.deleteItems(at: [indexPath])
-            saveGallery()
+            gallery.images = gallery.images.enumerated().filter { !indexes.contains($0.offset)}.map { $0.element}
+            indexPaths.forEach {
+                collectionView.deleteItems(at: [$0])
+            }
+        },completion:{ completed in
+            self.saveGallery()
         })
      }
     
@@ -202,3 +216,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
   
 }
 
+fileprivate struct Constants {
+    static let upperBound = 2.0
+    static let lowerBound = 0.4
+}

@@ -12,7 +12,7 @@ class ImageGalleryCollectionViewCell: UICollectionViewCell {
             imageView.backgroundColor = .clear
             imageView.image = nil
             indicator.startAnimating()
-            DispatchQueue.global(qos: .userInteractive).async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 let urlContents = try? Data(contentsOf: imageURL)
                 if let data = urlContents, imageURL == self.url {
                     DispatchQueue.main.async {

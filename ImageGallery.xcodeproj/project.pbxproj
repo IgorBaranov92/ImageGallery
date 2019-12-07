@@ -149,12 +149,12 @@
 			isa = PBXGroup;
 			children = (
 				78A91A0A238E800900239860 /* ImageViewController.swift */,
+				786441A82397F93000DBF25C /* ImageFetcher.swift */,
 				78A919CA238E631B00239860 /* AppDelegate.swift */,
 				78A919D3238E631C00239860 /* Assets.xcassets */,
 				78A919D5238E631C00239860 /* LaunchScreen.storyboard */,
 				78A919D8238E631C00239860 /* Info.plist */,
 				78A919FD238E692B00239860 /* Utilities.swift */,
-				786441A82397F93000DBF25C /* ImageFetcher.swift */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
