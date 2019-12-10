@@ -10,6 +10,12 @@ struct Gallery: Codable {
         self.name = name
     }
     
+    init(name:String,scale:Double,images:[Image]) {
+        self.name = name
+        self.scale = scale
+        self.images = images
+    }
+    
     var json: Data? {
         return try? JSONEncoder().encode(self)
     }

@@ -60,7 +60,7 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "imageGallery", for: indexPath)
         if let imageGalleryCell = cell as? ImageGalleryCollectionViewCell {
             imageGalleryCell.url = gallery.images[indexPath.item].url
-            
+            return imageGalleryCell
         }
         return cell
     }
@@ -85,7 +85,6 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         if recognizer.state == .changed  {
             gallery.scale *= Double(recognizer.scale)
             recognizer.scale = 1.0
-            print(gallery.scale)
             flowLayout?.invalidateLayout()
             if gallery.scale <= Constants.lowerBound { gallery.scale = Constants.lowerBound }
             if gallery.scale >= Constants.upperBound { gallery.scale = Constants.upperBound}
@@ -129,24 +128,20 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                     coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
                 }
             } else {//outer case
-                let placeholder = coordinator.drop(item.dragItem, to: UICollectionViewDropPlaceholder(insertionIndexPath: destinationIndexPath, reuseIdentifier: "placeholder"))
-                
                 coordinator.session.loadObjects(ofClass: NSURL.self) { nsurls in
                 if let firstURL = nsurls.first as? URL {
                     self.imageFetcher = ImageFetcher(url:firstURL.imageURL) { (url,image) in
                         let aspectRatio = image.size.width/image.size.height
-                        self.gallery.images.append(Image(url: url, aspectRatio: Double(aspectRatio)))
-//                        self.gallery.images.insert(Image(url: url, aspectRatio: Double(aspectRatio)), at: destinationIndexPath.item)
                         DispatchQueue.main.async {
                             self.collectionView.performBatchUpdates({
-                                self.collectionView.insertItems(at: [IndexPath(item: self.gallery.images.count-1, section: 0)])
-                                
+                                self.gallery.images.insert(Image(url: url, aspectRatio: Double(aspectRatio)), at: destinationIndexPath.item)
+                                self.collectionView.insertItems(at: [destinationIndexPath])
                             },completion: { completed in
                                 self.saveGallery()
-                                placeholder.deletePlaceholder()
                             } )
                         }
-                    }                }
+                    }
+                    }
             }
             }
         }

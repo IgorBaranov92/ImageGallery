@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -114,24 +113,6 @@
                                     <outlet property="indicator" destination="HeC-DI-gTf" id="usS-0x-8jl"/>
                                     <segue destination="XCD-YF-0rR" kind="show" identifier="image" id="PWS-4T-1eo"/>
                                 </connections>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="redraw" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="placeholder" id="aE8-qT-ume">
-                                <rect key="frame" x="362" y="0.0" width="300" height="300"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="aGn-oz-aBp">
-                                    <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="K2o-LK-fZH">
-                                            <rect key="frame" x="131.5" y="131.5" width="37" height="37"/>
-                                            <color key="color" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="K2o-LK-fZH" firstAttribute="centerX" secondItem="aGn-oz-aBp" secondAttribute="centerX" id="6BB-LB-tSe"/>
-                                        <constraint firstItem="K2o-LK-fZH" firstAttribute="centerY" secondItem="aGn-oz-aBp" secondAttribute="centerY" id="JgK-T9-SUt"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
                             </collectionViewCell>
                         </cells>
                         <connections>

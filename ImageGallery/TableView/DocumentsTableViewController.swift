@@ -6,17 +6,7 @@ class DocumentsTableViewController: UITableViewController,
 {
 
     // MARK: - Model
-    var galleries = Galleries() { didSet {
-        if let json = galleries.json {
-            if let url = try? FileManager.default.url(
-                for: .documentDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil, create: true)
-                .appendingPathComponent("galleries") {
-                try? json.write(to: url)
-            }
-        }
-        }}
+    var galleries = Galleries() { didSet { saveGalleries() }}
     
     private var row:Int { UserDefaults.standard.integer(forKey: Constants.lastRow) }
     private var firstLaunch = true
@@ -128,7 +118,7 @@ class DocumentsTableViewController: UITableViewController,
                     galleries.removed.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                     if galleries.removed.isEmpty {
-                        tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                        tableView.reloadData()
                     }
                 })
             }
@@ -144,7 +134,7 @@ class DocumentsTableViewController: UITableViewController,
                 self.tableView.deleteRows(at: [indexPath], with: .fade)
             })
             if self.galleries.removed.isEmpty {
-                tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                tableView.reloadData()
             }
             UserDefaults.standard.set(self.galleries.existing.count-1, forKey: Constants.lastRow)
             self.performSegue(withIdentifier: Constants.segueID, sender: self)
@@ -189,13 +179,31 @@ class DocumentsTableViewController: UITableViewController,
     // MARK: - Changing gallery name
     
     private func change(cell:DocumentTableViewCell,at indexPath:IndexPath) {
-        galleries.existing[indexPath.row].name = cell.textField.text!
-//        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = try? Data(contentsOf: url) {
-//            let gallery = Gallery(json: json)!
-//
-//        }
-        UserDefaults.standard.set(indexPath.item, forKey: Constants.lastRow)
-        performSegue(withIdentifier: Constants.segueID, sender: self)
+        if cell.textField.text == "" {
+            let alert = UIAlertController(title: "Error", message: "Gallery name shouldn't be emplty", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        } else if galleriesName.contains(cell.textField.text!) {
+            let alert = UIAlertController(title: "Error", message: "You already have this gallery", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        } else {
+            if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = try? Data(contentsOf: url) {
+                let gallery = Gallery(json: json)!
+                let newGallery = Gallery(name: cell.textField.text!, scale: gallery.scale, images: gallery.images)
+                galleries.existing[indexPath.row].scale = 1.0
+                galleries.existing[indexPath.row].images.removeAll()
+                try? json.write(to: url)
+                galleries.existing.remove(at: indexPath.row)
+                galleries.existing.insert(newGallery, at: indexPath.row)
+                if let newURL = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent(cell.textField.text!) {
+                    try? json.write(to: newURL)
+                }
+            }
+            UserDefaults.standard.set(indexPath.item, forKey: Constants.lastRow)
+            performSegue(withIdentifier: Constants.segueID, sender: self)
+        }
+        
     }
     
     
@@ -236,6 +244,18 @@ class DocumentsTableViewController: UITableViewController,
 
     func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
         return UITableViewDropProposal(operation: destinationIndexPath?.section == 0 ? .move : .forbidden, intent: .insertAtDestinationIndexPath)
+    }
+    
+    private func saveGalleries () {
+        if let json = galleries.json {
+            if let url = try? FileManager.default.url(
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil, create: true)
+                .appendingPathComponent("galleries") {
+                try? json.write(to: url)
+            }
+        }
     }
     
 }
