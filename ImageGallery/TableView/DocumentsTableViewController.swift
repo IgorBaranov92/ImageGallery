@@ -170,7 +170,8 @@ class DocumentsTableViewController: UITableViewController,
     // MARK: - IBAction
     
     @IBAction func addNewDocument(_ sender: UIBarButtonItem) {
-        galleries.existing.append(Gallery(name: "Untitled".madeUnique(withRespectTo: galleriesName)))
+        let galleryName = "Untitled".madeUnique(withRespectTo: galleriesName)
+        galleries.existing.append(Gallery(name: galleryName))
         tableView.insertRows(at: [IndexPath(row: galleries.existing.count - 1, section: 0)], with: .fade)
         tableView.selectRow(at: IndexPath(row: galleries.existing.count - 1, section: 0), animated: true, scrollPosition: .bottom)
         UserDefaults.standard.set(galleries.existing.count - 1, forKey: Constants.lastRow)
@@ -180,7 +181,6 @@ class DocumentsTableViewController: UITableViewController,
     
     // MARK: - Changing gallery name
     
-    private var gallery: Gallery?
     
     private func change(cell:DocumentTableViewCell,at indexPath:IndexPath) {
         if cell.textField.text == "" {
@@ -192,15 +192,17 @@ class DocumentsTableViewController: UITableViewController,
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             present(alert, animated: true)
         } else {
-            if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = try? Data(contentsOf: url) {
-                gallery = Gallery(json: json)
+            tableView.performBatchUpdates({
+                
+            })
+            if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = galleries.existing[indexPath.row].json,let newURL = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(cell.textField.text!)"),let newJSON = try? Data(contentsOf: url) {
                 galleries.existing[indexPath.row].images.removeAll()
-                galleries.existing[indexPath.row].scale = 1.0
-                galleries.existing[indexPath.row].name = cell.textField.text!
-                galleries.existing.insert(gallery!, at: indexPath.row)
                 try? json.write(to: url)
+                let gallery = Gallery(json: json)!
+                galleries.existing.remove(at: indexPath.row)
+                galleries.existing.insert(Gallery(name: cell.textField.text!, scale: gallery.scale, images: gallery.images), at: indexPath.row)
+                try? newJSON.write(to: newURL)
             }
-        
             UserDefaults.standard.set(indexPath.item, forKey: Constants.lastRow)
             performSegue(withIdentifier: Constants.segueID, sender: self)
         }
