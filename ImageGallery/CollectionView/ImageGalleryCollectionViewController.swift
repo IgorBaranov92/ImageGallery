@@ -10,16 +10,15 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
     // MARK: - Model
     
     var galleryName = String()
-    
+
     // MARK: - Private API
     
     private lazy var gallery = Gallery(name: galleryName)
-    private var imageFetcher: ImageFetcher!
     
+    private var imageURL: URL?
+    private var imageAspectRatio:Double?
     
-    @IBOutlet private weak var trashView: BinView! { didSet {
-        trashView.delegate = self
-        }}
+    @IBOutlet private weak var trashView: BinView! { didSet { trashView.delegate = self }}
     
     // MARK: - ViewController lifecycle
     
@@ -128,19 +127,27 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
                     coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
                 }
             } else {//outer case
-                coordinator.session.loadObjects(ofClass: NSURL.self) { nsurls in
-                if let firstURL = nsurls.first as? URL {
-                    self.imageFetcher = ImageFetcher(url:firstURL.imageURL) { (url,image) in
-                        let aspectRatio = image.size.width/image.size.height
-                        DispatchQueue.main.async {
-                            self.collectionView.performBatchUpdates({
-                                self.gallery.images.insert(Image(url: url, aspectRatio: Double(aspectRatio)), at: destinationIndexPath.item)
-                                self.collectionView.insertItems(at: [destinationIndexPath])
-                            },completion: { completed in
-                                self.saveGallery()
-                            } )
+                let placeholder = coordinator.drop(item.dragItem, to: UICollectionViewDropPlaceholder(insertionIndexPath: destinationIndexPath, reuseIdentifier: "placeholder"))
+                item.dragItem.itemProvider.loadObject(ofClass: UIImage.self) { (provider, error) in
+                    DispatchQueue.main.async {
+                        if let image = provider as? UIImage {
+                            self.imageAspectRatio = Double(image.size.width/image.size.height)
                         }
                     }
+                }
+                item.dragItem.itemProvider.loadObject(ofClass: NSURL.self) { (provider,error) in
+                    DispatchQueue.main.async {
+                        if let url = provider as? URL {
+                            self.imageURL = url.imageURL
+                        }
+                        if self.imageAspectRatio != nil && self.imageURL != nil {
+                            placeholder.commitInsertion { indexPath in
+                                self.gallery.images.insert(Image(url: self.imageURL!, aspectRatio: self.imageAspectRatio!), at: indexPath.item)
+                                self.saveGallery()
+                            }
+                        } else {
+                            placeholder.deletePlaceholder()
+                        }
                     }
             }
             }

@@ -72,6 +72,7 @@ class DocumentsTableViewController: UITableViewController,
                 galleryCell.completionHandler = { [weak self,unowned galleryCell] in
                     self?.change(cell: galleryCell, at: indexPath)
                 }
+                galleryCell.isUserInteractionEnabled = true
             } else {
                 galleryCell.textField.text = galleries.removed[indexPath.row].name
                 galleryCell.isUserInteractionEnabled = false
@@ -121,6 +122,7 @@ class DocumentsTableViewController: UITableViewController,
                         tableView.reloadData()
                     }
                 })
+                performSegue(withIdentifier: Constants.segueID, sender: self)
             }
         }
     }
@@ -178,6 +180,8 @@ class DocumentsTableViewController: UITableViewController,
     
     // MARK: - Changing gallery name
     
+    private var gallery: Gallery?
+    
     private func change(cell:DocumentTableViewCell,at indexPath:IndexPath) {
         if cell.textField.text == "" {
             let alert = UIAlertController(title: "Error", message: "Gallery name shouldn't be emplty", preferredStyle: .alert)
@@ -189,21 +193,17 @@ class DocumentsTableViewController: UITableViewController,
             present(alert, animated: true)
         } else {
             if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = try? Data(contentsOf: url) {
-                let gallery = Gallery(json: json)!
-                let newGallery = Gallery(name: cell.textField.text!, scale: gallery.scale, images: gallery.images)
-                galleries.existing[indexPath.row].scale = 1.0
+                gallery = Gallery(json: json)
                 galleries.existing[indexPath.row].images.removeAll()
+                galleries.existing[indexPath.row].scale = 1.0
+                galleries.existing[indexPath.row].name = cell.textField.text!
+                galleries.existing.insert(gallery!, at: indexPath.row)
                 try? json.write(to: url)
-                galleries.existing.remove(at: indexPath.row)
-                galleries.existing.insert(newGallery, at: indexPath.row)
-                if let newURL = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent(cell.textField.text!) {
-                    try? json.write(to: newURL)
-                }
             }
+        
             UserDefaults.standard.set(indexPath.item, forKey: Constants.lastRow)
             performSegue(withIdentifier: Constants.segueID, sender: self)
         }
-        
     }
     
     

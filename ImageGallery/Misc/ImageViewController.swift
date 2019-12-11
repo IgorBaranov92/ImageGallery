@@ -28,16 +28,13 @@ class ImageViewController: UIViewController, UIScrollViewDelegate {
     
     private func fetchImage() {
          if let imageURL = url {
-           indicator.startAnimating()
-           DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-               let urlContents = try? Data(contentsOf: imageURL)
-               if let data = urlContents, imageURL == self?.url {
-                   DispatchQueue.main.async {
-                       self?.imageView.image = UIImage(data: data)
-                       self?.indicator.stopAnimating()
-                   }
-               }
-           }
+            indicator.startAnimating()
+            _ = ImageFetcher(url: imageURL) { (url, image) in
+                DispatchQueue.main.async { [weak self] in
+                    self?.imageView.image = image
+                    self?.indicator.stopAnimating()
+                }
+            }
        }
 
     }
