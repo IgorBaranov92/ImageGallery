@@ -32,13 +32,12 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(gallery.name)"), let jsonData = try? Data(contentsOf: url),let newValue = Gallery(json: jsonData) {
             gallery = newValue
             saveGallery()
-            collectionView.reloadData()
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        collectionView.reloadData()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
