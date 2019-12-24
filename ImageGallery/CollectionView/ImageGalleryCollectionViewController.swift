@@ -29,14 +29,16 @@ class ImageGalleryCollectionViewController: UICollectionViewController, UICollec
         navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
         collectionView.dropDelegate = self
         collectionView.dragDelegate = self
+        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(gallery.name)"), let jsonData = try? Data(contentsOf: url),let newValue = Gallery(json: jsonData) {
+            gallery = newValue
+            saveGallery()
+            collectionView.reloadData()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(gallery.name)"), let jsonData = try? Data(contentsOf: url),let newValue = Gallery(json: jsonData) {
-            gallery = newValue
-            collectionView.reloadData()
-        }
+        
     }
 
     override func viewWillDisappear(_ animated: Bool) {

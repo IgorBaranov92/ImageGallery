@@ -192,12 +192,7 @@ class DocumentsTableViewController: UITableViewController,
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             present(alert, animated: true)
         } else {
-            tableView.performBatchUpdates({
-                
-            })
-            if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = galleries.existing[indexPath.row].json,let newURL = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(cell.textField.text!)"),let newJSON = try? Data(contentsOf: url) {
-                galleries.existing[indexPath.row].images.removeAll()
-                try? json.write(to: url)
+            if let url = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(galleries.existing[indexPath.row].name)"),let json = galleries.existing[indexPath.row].json,let newURL = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("\(cell.textField.text!)"),let newJSON = try? Data(contentsOf: url) {
                 let gallery = Gallery(json: json)!
                 galleries.existing.remove(at: indexPath.row)
                 galleries.existing.insert(Gallery(name: cell.textField.text!, scale: gallery.scale, images: gallery.images), at: indexPath.row)
